@@ -19,9 +19,17 @@ class RepairService:
     def get_in_progress(self, user_id):
         url = f"{self.base_url}/repair/in-progress/{user_id}"
         response = requests.get(url, headers=self._get_headers(), cookies=self._get_cookies())
+        if response.status_code != 200:
+            self.login_service.authenticate()
+            response = requests.get(url, headers=self._get_headers(), cookies=self._get_cookies())
+            print(response.status_code)
         return response.json()
 
     def get_completed(self, user_id):
         url = f"{self.base_url}/repair/recent-completed/{user_id}"
         response = requests.get(url, headers=self._get_headers(), cookies=self._get_cookies())
+        if response.status_code != 200:
+            self.login_service.authenticate()
+            response = requests.get(url, headers=self._get_headers(), cookies=self._get_cookies())
+            print(response.status_code)
         return response.json()
