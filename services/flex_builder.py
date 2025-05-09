@@ -14,8 +14,9 @@ class FlexBuilder:
                         {"type": "text", "text": f"ลำดับที่: {idx}", "weight": "bold", "size": "sm", "color": "#3366CC"},
                         {"type": "text", "text": f"ผู้รับผิดชอบ: {item.get('assigneeName')}", "weight": "bold", "size": "sm"},
                         {"type": "text", "text": f"เบอร์โทร: {item.get('phone')}", "size": "sm", "color": "#555555"},
-                        {"type": "text", "text": f"วันที่เริ่มทำ: {item.get('responseDate')}", "size": "sm"},
-                        {"type": "text", "text": f"วันที่ปิด: {item.get('returnDate')}", "size": "sm"}
+                        {"type": "text", "text": f"วันที่แจ้งซ่อม: {item.get('createDate')}", "size": "sm", "wrap": True},
+                        {"type": "text", "text": f"วันที่เริ่มทำ: {item.get('responseDate')}", "size": "sm", "wrap": True},
+                        {"type": "text", "text": f"วันที่ปิด: {item.get('returnDate')}", "size": "sm", "wrap": True}
                     ]
                 }
             }

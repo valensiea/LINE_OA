@@ -17,8 +17,8 @@ LOGIN_URL = os.getenv("LOGIN_URL")
 USERNAME = os.getenv("LOGIN_USERNAME")
 PASSWORD = os.getenv("LOGIN_PASSWORD")
 CHANNEL_ACCESS_TOKEN = os.getenv("CHANNEL_ACCESS_TOKEN")
-COMPANY_ID = 355
-
+COMPANY_ID = os.getenv("COMPANY_ID")
+VERSION = os.getenv("VERSION")
 # Initialize services
 login_service = LoginService(LOGIN_URL, USERNAME, PASSWORD)
 login_service.authenticate()
@@ -35,7 +35,6 @@ def auto_send_message():
         if LINE_UID:
             line_bot.push_message(LINE_UID, "📢 แจ้งเตือนอัตโนมัติทุก 5 นาที")
         time.sleep(300)
-
 
 @app.route("/")
 def index():
@@ -61,17 +60,26 @@ def webhook():
 
                 if "ติดตามงานที่กำลังทำ" in user_text:
                     data = repair_service.get_in_progress(LINE_UID)
-                    bubbles = FlexBuilder.build_report_card(data)
-                    line_bot.send_flex_message(reply_token, bubbles, "ติดตามงานที่กำลังทำ")
+                    if not data:
+                        # ถ้าไม่มีข้อมูลให้ตอบกลับด้วยข้อความ
+                        line_bot.reply_message(reply_token, "ไม่พบข้อมูลงานที่กำลังดำเนินการ")
+                    else:
+                        # ถ้ามีข้อมูลให้สร้าง bubble และส่ง Flex
+                        bubbles = FlexBuilder.build_report_card(data)
+                        line_bot.send_flex_message(reply_token, bubbles, "ติดตามงานที่กำลังทำ")
                 elif "ติดตามงานที่ปิดแล้ว" in user_text:
                     data = repair_service.get_completed(LINE_UID)
-                    bubbles = FlexBuilder.build_report_card(data)
-                    line_bot.send_flex_message(reply_token, bubbles, "ติดตามงานที่ปิดแล้ว")
-                else:
-                    line_bot.reply_message(reply_token, LINE_UID)
+                    if not data:
+                        # ถ้าไม่มีข้อมูลให้ตอบกลับด้วยข้อความ
+                        line_bot.reply_message(reply_token, "ไม่พบข้อมูลงานที่ปิดแล้ว")
+                    else:
+                        # ถ้ามีข้อมูลให้สร้าง bubble และส่ง Flex
+                        bubbles = FlexBuilder.build_report_card(data)
+                        line_bot.send_flex_message(reply_token, bubbles, "ติดตามงานที่ปิดแล้ว")
+                # else:
+                #     line_bot.reply_message(reply_token, LINE_UID)
 
     return jsonify({"status": "ok"})
-
 
 if __name__ == "__main__":
     # threading.Thread(target=auto_send_message, daemon=True).start()
