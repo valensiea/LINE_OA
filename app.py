@@ -83,4 +83,5 @@ def webhook():
 
 if __name__ == "__main__":
     # threading.Thread(target=auto_send_message, daemon=True).start()
-    app.run(port=5000, debug=True)
+    # app.run(port=5000, debug=True)
+    app.run(host="0.0.0.0", debug=True)
